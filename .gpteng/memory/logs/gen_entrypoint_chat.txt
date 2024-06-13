@@ -1,0 +1,88 @@
+
+2024-06-13T05:35:34.111391
+================================ System Message ================================
+
+You will get information about a codebase that is currently on disk in the current folder.
+The user will ask you to write a script that runs the code in a specific way.
+You will answer with code blocks that include all the necessary terminal commands.
+Do not install globally. Do not use sudo.
+Do not explain the code, just give the commands.
+Do not use placeholders, use example values (like . for a folder argument) if necessary.
+
+
+================================ Human Message =================================
+
+
+        Make a unix script that
+        a) installs dependencies
+        b) runs all necessary parts of the codebase (in parallel if necessary)
+        
+Information about the codebase:
+
+```
+File: appsdcript0001.py
+1 # このスクリプトは、YouTubeの字幕を取得し、校正処理を行うプログラムです。
+2 
+3 import os
+4 import json
+5 import requests
+6 from bs4 import BeautifulSoup
+7 from dataclasses import dataclass
+8 
+9 @dataclass
+10 class YouTubeSubtitle:
+11     """YouTubeの字幕を表すクラス"""
+12     video_id: str
+13     language_code: str
+14     subtitles: list[str]
+15 
+16 def get_youtube_subtitles(video_id: str, language_code: str) -> YouTubeSubtitle:
+17     """YouTubeの字幕を取得する関数"""
+18     url = f"https://www.youtube.com/watch?v={video_id}"
+19     response = requests.get(url)
+20     soup = BeautifulSoup(response.content, 'html.parser')
+21     subtitles = []
+22     for caption in soup.find_all('track', {'kind': 'captions', 'srclang': language_code}):
+23         subtitles.append(caption.text.strip())
+24     return YouTubeSubtitle(video_id, language_code, subtitles)
+25 
+26 def correct_subtitles(subtitles: list[str]) -> list[str]:
+27     """字幕の校正処理を行う関数"""
+28     corrected_subtitles = []
+29     for subtitle in subtitles:
+30         # ここでは簡単な校正処理を行う
+31         corrected_subtitle = subtitle.replace("、", ",").replace("。", ".")
+32         corrected_subtitles.append(corrected_subtitle)
+33     return corrected_subtitles
+34 
+35 def main():
+36     video_id = "VIDEO_ID_HERE"  # YouTubeのビデオID
+37     language_code = "ja"  # 言語コード（日本語）
+38     subtitles = get_youtube_subtitles(video_id, language_code)
+39     corrected_subtitles = correct_subtitles(subtitles.subtitles)
+40     print("Corrected Subtitles:")
+41     for subtitle in corrected_subtitles:
+42         print(subtitle)
+43 
+44 if __name__ == "__main__":
+45     main()
+
+File: requirements.txt
+1 requests
+2 beautifulsoup4
+
+```
+
+================================== Ai Message ==================================
+
+Here is the Unix script that installs dependencies and runs the codebase:
+
+```
+#!/bin/bash
+
+# Install dependencies
+python -m pip install --user -r requirements.txt
+
+# Run the code
+python appsdcript0001.py
+```
